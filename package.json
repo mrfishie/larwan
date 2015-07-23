@@ -1,0 +1,32 @@
+{
+  "name": "larwan",
+  "version": "0.1.0",
+  "description": "An efficient low-level 2D tree-based rendering engine",
+  "main": "config.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrfishie/larwan.git"
+  },
+  "keywords": [
+    "rendering",
+    "canvas",
+    "engine",
+    "efficient",
+    "2d",
+    "tree",
+    "browser",
+    "headless"
+  ],
+  "author": "mrfishie <me@mrfishie.com> (http://mrfishie.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrfishie/larwan/issues"
+  },
+  "homepage": "https://github.com/mrfishie/larwan#readme"
+}
