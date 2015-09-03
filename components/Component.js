@@ -19,6 +19,7 @@ function Component() {
 
     this.on('dirty', this._isDirty.bind(this));
     this.on('dirtyChild', this._dirtyChild.bind(this));
+    this.on('resort', this._resort.bind(this));
     this.on('refresh', this.refresh.bind(this));
 
     var x = 0, y = 0, z = 0;
@@ -92,7 +93,10 @@ function Component() {
                 if (typeof newValue !== "number") newValue = parseFloat(newValue);
                 if (newValue != z) {
                     z = newValue;
-                    if (this.parent) this.parent.emit('dirtyChild', this);
+                    if (this.parent) {
+                        this.parent.emit('resort');
+                        this.parent.emit('dirtyChild', this);
+                    }
                 }
             }.bind(this)
         },
@@ -369,6 +373,12 @@ Component.prototype._renderAreas = function(areas) {
     }.bind(this));
 };
 
+Component.prototype._resort = function() {
+    this.children = this.children.sort(function(a, b) {
+        return a.z - b.z;
+    });
+};
+
 /**
  * The component-customizable render function. Components that override this should call the parent classes
  * renderSelf method, passing the areas array, which will end up calling _renderAreas. As a result the
@@ -480,11 +490,7 @@ Component.prototype.addChild = function(child) {
         child.parent = this;
         this.children.push(child);
         this.emit('dirtyChild', child);
-
-        // re-sort children
-        this.children = this.children.sort(function(a, b) {
-            return a.z - b.z;
-        });
+        this.emit('resort');
     }
 
     return this;
