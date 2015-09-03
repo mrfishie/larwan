@@ -15,8 +15,6 @@ function Component() {
 
     this.parent = false;
 
-    this.clones = [];
-
     this.isStage = false;
 
     this.on('dirty', this._isDirty.bind(this));
@@ -321,10 +319,6 @@ Component.prototype._renderAreas = function(areas) {
         this.children.forEach(function(child) {
             var childX = child.x, childY = child.y, childWidth = child.width, childHeight = child.height;
 
-            //var checkSizes = this.transformDirtyArea([childX, childY, childWidth, childHeight]);
-            //var checkX = checkSizes[0], checkY = checkSizes[1], checkWidth = checkSizes[2], checkheight = checkSizes[3];
-
-
             if (config.snapToPixel) {
                 childX = Math.floor(childX);
                 childY = Math.floor(childY);
@@ -482,7 +476,7 @@ Component.prototype.addChild = function(child) {
     if (child.isStage) throw new TypeError("Can't add a stage as a child!");
 
     if (this.children.indexOf(child) === -1) {
-        if (child.parent) child = child.clone();
+        if (child.parent) throw new Error("Child already has a parent");
         child.parent = this;
         this.children.push(child);
         this.emit('dirtyChild', child);
@@ -529,21 +523,4 @@ Component.prototype.removeChild = function(child) {
  */
 Component.prototype.transformDirtyArea = function(c) {
     return c;
-};
-
-/**
- * Returns a 'dumb' copy of the component that maintains a two-way relationship,
- * i.e modifying a property on the main and clone modifies the other side.
- * The clone will also use the main component's canvas, and rendering or
- * marking it as dirty will do the same to the main component.
- *
- * Normally this is used to give a component two parents, however it can also
- * be useful for having two of the same item that update together.
- *
- * TODO: implement cloning
- *
- * @returns {Component} The cloned component
- */
-Component.prototype.clone = function() {
-    return this;
 };
