@@ -1,5 +1,7 @@
 var config = require('../config');
 var Matrix = require('../utils/Matrix');
+var MagicProperty = require('../utils/MagicProperty');
+var util = require('util');
 
 var $dummy = config.createCanvas();
 var dummyCtx = $dummy.getContext('2d');
@@ -14,6 +16,8 @@ function createPattern(image, repeatX, repeatY) {
 }
 
 function Pattern(image, repeatX, repeatY) {
+    MagicProperty.call(this);
+
     image = typeof image === "string" ? new Image(image) : image;
     repeatX = repeatX == null ? true : repeatX;
     repeatY = repeatY == null ? true : repeatY;
@@ -30,6 +34,7 @@ function Pattern(image, repeatX, repeatY) {
                 if (image !== newValue) {
                     image = newValue;
                     this._domPattern = createPattern(image, repeatX, repeatY);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -42,6 +47,7 @@ function Pattern(image, repeatX, repeatY) {
                 if (repeatX !== newValue) {
                     repeatX = newValue;
                     this._domPattern = createPattern(image, repeatX, repeatY);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -54,6 +60,7 @@ function Pattern(image, repeatX, repeatY) {
                 if (repeatY !== newValue) {
                     repeatY = newValue;
                     this._domPattern = createPattern(image, repeatX, repeatY);
+                    this._apply();
                 }
             }.bind(this)
         }
@@ -61,10 +68,15 @@ function Pattern(image, repeatX, repeatY) {
 
     this._isPattern = true;
 }
+
+util.inherits(Pattern, MagicProperty);
 module.exports = Pattern;
 
 Pattern.prototype.setTransform = function(matrix) {
-    if (matrix && this._domPattern.setTransform) this._domPattern.setTransform(Matrix.from(matrix).toSvgMatrix());
+    if (matrix && this._domPattern.setTransform) {
+        this._domPattern.setTransform(Matrix.from(matrix).toSvgMatrix());
+        this._apply();
+    }
 };
 
 Pattern.prototype.asFill = function(ctx) {

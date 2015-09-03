@@ -1,8 +1,11 @@
 var convertColor = require('./convertColor');
 var Color = require('./Color');
+var MagicProperty = require('../utils/MagicProperty');
 var util = require('util');
 
 function Shadow(c, b, x, y) {
+    MagicProperty.call(this);
+
     var color = new Color(0, 0, 0, 0),
         blur = 0,
         offsetX = 0,
@@ -14,7 +17,9 @@ function Shadow(c, b, x, y) {
                 return color;
             },
             set: function(newValue) {
+                if (color) color._unsubscribe(this);
                 color = convertColor(newValue);
+                color._subscribe(this);
             }
         },
         blur: {
@@ -23,6 +28,7 @@ function Shadow(c, b, x, y) {
             },
             set: function(newValue) {
                 blur = parseFloat(newValue);
+                this._apply();
             }
         },
         offsetX: {
@@ -31,6 +37,7 @@ function Shadow(c, b, x, y) {
             },
             set: function(newValue) {
                 offsetX = parseFloat(newValue);
+                this._apply();
             }
         },
         offsetY: {
@@ -39,6 +46,7 @@ function Shadow(c, b, x, y) {
             },
             set: function(newValue) {
                 offsetY = parseFloat(newValue);
+                this._apply();
             }
         }
     });
@@ -50,6 +58,8 @@ function Shadow(c, b, x, y) {
 
     this._isShadow = true;
 }
+
+util.inherits(Shadow, MagicProperty);
 module.exports = Shadow;
 
 Shadow.prototype.applyOn = function(ctx) {

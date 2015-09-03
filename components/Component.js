@@ -21,6 +21,7 @@ function Component() {
 
     this.on('dirty', this._isDirty.bind(this));
     this.on('dirtyChild', this._dirtyChild.bind(this));
+    this.on('refresh', this.refresh.bind(this));
 
     var x = 0, y = 0, z = 0;
 
@@ -394,6 +395,7 @@ Component.prototype.renderSelf = function(areas) {
  */
 Component.prototype.refresh = function(rect) {
     rect = rect || {};
+
     this.emit('dirty', [
         Math.max(0, rect.x || 0),
         Math.max(0, rect.y || 0),

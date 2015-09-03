@@ -1,5 +1,6 @@
 var util = require('util');
 var parseColor = require('./parseColor');
+var MagicProperty = require('../utils/MagicProperty');
 
 function clampByte(i) {
     i = Math.round(i);
@@ -79,6 +80,8 @@ function hslToRgb(h, s, l) {
  * @constructor
  */
 function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
+    MagicProperty.call(this);
+
     var a;
     var rgbCache = false, hslCache = false;
 
@@ -172,6 +175,7 @@ function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
                 if (!rgbCache) rgbCache = hslToRgb(hslCache[0], hslCache[1], hslCache[2]);
                 rgbCache[0] = clampByte(newValue);
                 hslCache = false;
+                this._apply();
             }
         },
         g: {
@@ -184,6 +188,7 @@ function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
                 if (!rgbCache) rgbCache = hslToRgb(hslCache[0], hslCache[1], hslCache[2]);
                 rgbCache[1] = clampByte(newValue);
                 hslCache = false;
+                this._apply();
             }
         },
         b: {
@@ -196,6 +201,7 @@ function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
                 if (!rgbCache) rgbCache = hslToRgb(hslCache[0], hslCache[1], hslCache[2]);
                 rgbCache[2] = clampByte(newValue);
                 hslCache = false;
+                this._apply();
             }
         },
         h: {
@@ -208,6 +214,7 @@ function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
                 if (!hslCache) hslCache = rgbToHsl(rgbCache[0], rgbCache[1], rgbCache[2]);
                 hslCache[0] = (((parseFloat(newValue) % 360) + 360) % 360) / 360;
                 rgbCache = false;
+                this._apply();
             }
         },
         s: {
@@ -220,6 +227,7 @@ function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
                 if (!hslCache) hslCache = rgbToHsl(rgbCache[0], rgbCache[1], rgbCache[2]);
                 hslCache[1] = clampFloat(newValue);
                 rgbCache = false;
+                this._apply();
             }
         },
         l: {
@@ -232,6 +240,7 @@ function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
                 if (!hslCache) hslCache = rgbToHsl(rgbCache[0], rgbCache[1], rgbCache[2]);
                 hslCache[2] = clampFloat(newValue);
                 rgbCache = false;
+                this._apply();
             }
         },
 
@@ -242,10 +251,12 @@ function Color(r_h_hex_css_color, g_s, b_l, a_isHSL, isHSL) {
             set: function(newValue) {
                 if (!util.isNumber(newValue)) newValue = parseFloat(newValue);
                 a = clampFloat(newValue);
+                this._apply();
             }
         }
     });
 }
+util.inherits(Color, MagicProperty);
 
 module.exports = Color;
 

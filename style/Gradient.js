@@ -1,5 +1,7 @@
+var util = require('util');
 var convertColor = require('./convertColor');
 var config = require('../config');
+var MagicProperty = require('../utils/MagicProperty');
 
 var $dummy = config.createCanvas();
 var dummyCtx = $dummy.getContext('2d');
@@ -11,6 +13,8 @@ function createGradient(type, startX, startY, endX, endY, radius) {
 }
 
 function Gradient(type, x1, y1, x2_r, y2) {
+    MagicProperty.call(this);
+
     type = type || Gradient.LINEAR;
     var startX = x1 || 0;
     var startY = y1 || 0;
@@ -30,6 +34,7 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 if (type !== newValue) {
                     type = newValue;
                     this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -42,6 +47,7 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 if (startX !== newValue) {
                     startX = newValue;
                     this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -54,6 +60,7 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 if (startY !== newValue) {
                     startY = newValue;
                     this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -65,8 +72,8 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 newValue = parseFloat(newValue);
                 if (endX !== newValue) {
                     endX = newValue;
-                    if (this.type === Gradient.LINEAR)
-                        this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -78,8 +85,8 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 newValue = parseFloat(newValue);
                 if (endY !== newValue) {
                     endY = newValue;
-                    if (this.type === Gradient.LINEAR)
-                        this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -93,6 +100,7 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 if (startX !== newValue) {
                     startX = newValue;
                     this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -105,6 +113,7 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 if (startY !== newValue) {
                     startY = newValue;
                     this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         },
@@ -116,8 +125,8 @@ function Gradient(type, x1, y1, x2_r, y2) {
                 newValue = parseFloat(newValue);
                 if (radius !== newValue) {
                     radius = newValue;
-                    if (this.type === Gradient.RADIAL)
-                        this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._domGradient = createGradient(type, startX, startY, endX, endY, radius);
+                    this._apply();
                 }
             }.bind(this)
         }
@@ -125,6 +134,8 @@ function Gradient(type, x1, y1, x2_r, y2) {
 
     this._isGradient = true;
 }
+util.inherits(Gradient, MagicProperty);
+
 Gradient.LINEAR = "linear";
 Gradient.RADIAL = "radial";
 
@@ -133,6 +144,7 @@ module.exports = Gradient;
 Gradient.prototype.addStop = function(position, color) {
     position = position < 0 ? 0 : position > 1 ? 1 : position;
     this._domGradient.addColorStop(position, convertColor(color).toString());
+    this._apply();
 };
 
 Gradient.prototype.asFill = function(ctx) {

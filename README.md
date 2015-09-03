@@ -48,7 +48,6 @@ stage.addChild(rotator);
 renderer.on('update', function(dt) {
 	rotator.angle += dt / 3600;
 	square.fill.style.h += dt / 16;
-	square.fill.applyOn(square.ctx);
 });
 
 renderer.stage = stage;
@@ -69,6 +68,7 @@ The following features are currently implemented in Larwan:
 
  - Standard components for most of CanvasRenderingContext2D's features (including transforms)
  - Complex color and style system (conversion between CSS-formatted colors, RGB(A), and HSL(A))
+ - Magic properties on components and styles automate dirtying elements
  - Extensible tree-based component system
  - Efficient rendering mechanism
 
@@ -80,7 +80,6 @@ The following features still need to be completed:
  - Path component (allows creation of canvas paths)
  - Tweener (a powerful system to animate properties between values, supporting complex objects like colors)
  - Hit box component?
- - Proper dirty syncing for colors and other complex properties (modifying a color or style currently doesn't mark the object as dirty)
  - Cloning (creates a clone object with the same canvas and two-way property syncing with the base object)
 
 ## Contributing

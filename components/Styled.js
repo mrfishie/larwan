@@ -17,10 +17,14 @@ function StyledComponent() {
                 return fill;
             },
             set: function(newValue) {
+                if (fill) fill._unsubscribe(this);
+
                 if (newValue === false) fill = false;
                 else {
                     fill = convertFill(newValue);
-                    fill.applyOn(this.ctx);
+                    fill._subscribe(this, function() {
+                        fill.applyOn(this.ctx);
+                    }.bind(this));
                 }
                 this.refresh();
             }
@@ -30,10 +34,14 @@ function StyledComponent() {
                 return stroke;
             },
             set: function(newValue) {
+                if (stroke) stroke._unsubscribe(this);
+
                 if (newValue === false) stroke = false;
                 else {
                     stroke = convertStroke(newValue);
-                    stroke.applyOn(this.ctx);
+                    stroke._subscribe(this, function() {
+                        stroke.applyOn(this.ctx);
+                    }.bind(this));
                 }
                 this.refresh();
             }
@@ -43,10 +51,14 @@ function StyledComponent() {
                 return shadow;
             },
             set: function(newValue) {
+                if (shadow) shadow._unsubscribe(this);
+
                 if (newValue === false) shadow = false;
                 else {
                     shadow = convertShadow(newValue);
-                    shadow.applyOn(this.ctx);
+                    shadow._subscribe(this, function() {
+                        shadow.applyOn(this.ctx);
+                    }.bind(this));
                 }
                 this.refresh();
             }
@@ -55,7 +67,7 @@ function StyledComponent() {
 
     this.on('resize', function() {
         if (fill) fill.applyOn(this.ctx);
-        if (stroke)stroke.applyOn(this.ctx);
+        if (stroke) stroke.applyOn(this.ctx);
         if (shadow) shadow.applyOn(this.ctx);
     }.bind(this));
 }
